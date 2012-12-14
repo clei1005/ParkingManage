@@ -1,3 +1,5 @@
+package pojo;
+
 /**
  * Created with IntelliJ IDEA.
  * User: 51ibm

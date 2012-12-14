@@ -1,8 +1,13 @@
+import exception.NoCarException;
+import exception.NoPlaceException;
 import org.junit.Assert;
 import org.junit.Test;
+import packstrategy.FirstAvailableParkingStrategy;
+import packstrategy.MaxAvailableParkingStrategy;
+import packstrategy.packStrategy;
+import pojo.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,19 +65,28 @@ public class parkPlaceTest {
         PP.parking(new Car());
         Assert.assertEquals(Integer.valueOf(maxParkingNum - 2), PP.GetAvailableNum());
     }
+
+
     //作为一个停车员，我需要管理多个停车场；
 
     //  以便停车的时候，我可以快速的停进有空车位的停车场；取车的时候我能取到正确的车辆。
+
+    //策略方式
     @Test
-    public void parkBoy_ShouldParkCar() {
+    public void parkBoy_ShouldParkCar(packStrategy strategy){
+        if(strategy == null )
+            strategy = new FirstAvailableParkingStrategy();
+
+
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
         parkPlaces.add(parkPlace);
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces);
-        Ticket ticket = parkingBoy.park(car, parkPlace);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces,strategy);
+        Ticket ticket=parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
+
     }
 
     /*取车---
@@ -94,17 +108,43 @@ public class parkPlaceTest {
     //作为一个停车员，我需要管理多个停车场；
 
     //  以便停车的时候，停入到最空闲的车场。
+
+    //策略模式
     @Test
-    public void parkBoy_ShouldPark_mostAvailableCar(List<ParkPlace> parkPlaceList) {
+    public void parkBoy_ShouldPark_mostAvailableCar(packStrategy  strategy) {
+        if(strategy == null )
+            strategy = new MaxAvailableParkingStrategy();
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces);
-        ParkPlace maxParkPlace= parkingBoy.MaxAvailableParkingLotChooser();
-        Ticket ticket = parkingBoy.park(car, maxParkPlace);
+
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces,strategy);
+        Ticket ticket=parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
 
     }
     //------------end-------------/
+
+    //作为停车场的经理（Parking Manager），我要管理多个停车仔，让他们停车，同时也可以自己随机停车
+
+    //让停车仔停车
+    //策略模式
+
+    @Test
+    public void parkManager_ShouldPark_byParkingBoy(packStrategy  strategy) {
+        if(strategy == null )
+            strategy = new MaxAvailableParkingStrategy();
+        Car car = new Car();
+        int maxParkingNum = 20;
+        ParkPlace parkPlace = new ParkPlace(maxParkingNum);
+        ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces,strategy);
+        ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
+
+        PackManager packManager = new PackManager(parkingBoys);
+        Ticket ticket=packManager.park(car);
+        Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
+
+    }
 }
