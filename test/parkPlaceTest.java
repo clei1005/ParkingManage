@@ -8,6 +8,7 @@ import packstrategy.packStrategy;
 import pojo.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -73,8 +74,8 @@ public class parkPlaceTest {
 
     //策略方式
     @Test
-    public void parkBoy_ShouldParkCar(packStrategy strategy){
-        if(strategy == null )
+    public void parkBoy_ShouldParkCar(packStrategy strategy) {
+        if (strategy == null)
             strategy = new FirstAvailableParkingStrategy();
 
 
@@ -83,8 +84,8 @@ public class parkPlaceTest {
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
         parkPlaces.add(parkPlace);
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces,strategy);
-        Ticket ticket=parkingBoy.park(car);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        Ticket ticket = parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
 
     }
@@ -111,16 +112,16 @@ public class parkPlaceTest {
 
     //策略模式
     @Test
-    public void parkBoy_ShouldPark_mostAvailableCar(packStrategy  strategy) {
-        if(strategy == null )
+    public void parkBoy_ShouldPark_mostAvailableCar(packStrategy strategy) {
+        if (strategy == null)
             strategy = new MaxAvailableParkingStrategy();
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
 
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces,strategy);
-        Ticket ticket=parkingBoy.park(car);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        Ticket ticket = parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
 
     }
@@ -132,19 +133,72 @@ public class parkPlaceTest {
     //策略模式
 
     @Test
-    public void parkManager_ShouldPark_byParkingBoy(packStrategy  strategy) {
-        if(strategy == null )
+    public void parkManager_ShouldPark_byParkingBoy(packStrategy strategy) {
+        if (strategy == null)
             strategy = new MaxAvailableParkingStrategy();
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces,strategy);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
         ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
 
         PackManager packManager = new PackManager(parkingBoys);
-        Ticket ticket=packManager.park(car);
+        Ticket ticket = packManager.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
 
+    }
+
+    //------------end-------------/
+
+    //作为停车场的经理（Parking Manager），我要管理多个停车仔，让他们停车，同时也可以自己随机停车
+
+    //自己停车
+    //策略模式
+
+    @Test
+    public void parkManager_ShouldPark_byOwn(packStrategy strategy) {
+        if (strategy == null)
+            strategy = new MaxAvailableParkingStrategy();
+        Car car = new Car();
+        int maxParkingNum = 20;
+        ParkPlace parkPlace = new ParkPlace(maxParkingNum);
+        ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
+
+        PackManager packManager = new PackManager(parkingBoys, parkPlaces);
+        Ticket ticket = packManager.park(car);
+        Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
+    }
+
+    //作为停车场的主管（Parking Director），我希望看到一张报表，其中包括经理和每个停车仔所管理的车
+    // 停车仔
+    @Test
+    public void parkBoy_ReviewReport() {
+        Car car = new Car();
+        int maxParkingNum = 20;
+        ParkPlace parkPlace = new ParkPlace(maxParkingNum);
+        ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces);
+        Ticket ticket = parkingBoy.park(car);
+        Assert.assertEquals(new Integer(maxParkingNum - 1).intValue(), parkingBoy.showReport().getTotalAvailableNum());
+    }
+
+    //作为停车场的主管（Parking Director），我希望看到一张报表，其中包括经理和每个停车仔所管理的车
+    // 停车管理员
+    @Test
+    public void parkManager_ReviewReport() {
+        Car car = new Car();
+        int maxParkingNum = 20;
+        ParkPlace parkPlace = new ParkPlace(maxParkingNum);
+        ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces);
+
+        ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
+
+        PackManager packManager = new PackManager(parkingBoys, parkPlaces);
+        Ticket ticket = packManager.park(car);
+        Assert.assertEquals(new Integer(maxParkingNum - 1).intValue(), packManager.showReport().getTotalAvailableNum());
     }
 }

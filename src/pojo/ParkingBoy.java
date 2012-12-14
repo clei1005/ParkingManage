@@ -7,12 +7,21 @@ import pojo.Car;
 import pojo.ParkPlace;
 import pojo.Ticket;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ParkingBoy {
     protected List<ParkPlace> parkPlaces;
     private packStrategy strategy;
+    private String parkingBoyNo;
 
+    public String getParkingBoyNo() {
+        return parkingBoyNo;
+    }
+
+    public void setParkingBoyNo(String parkingBoyNo) {
+        this.parkingBoyNo = parkingBoyNo;
+    }
 
     public ParkingBoy(List<ParkPlace> parkPlaces) {
         this.parkPlaces = parkPlaces;
@@ -41,7 +50,6 @@ public class ParkingBoy {
     }
 
 
-
     //取车
     public Car fetch(Ticket ticket) {
         Car fetchedCar = null;
@@ -52,6 +60,29 @@ public class ParkingBoy {
             }
         }
         throw new NoCarException("没有此车");
+    }
+
+    public ParkingBoyReport showReport() {
+        ParkingBoyReport parkingBoyReport=new ParkingBoyReport();
+        int totalParkNum = 0;
+        int totalAvailableNum = 0;
+        List<ParkingReport> parkingreportList = new ArrayList<ParkingReport>();
+        for (ParkPlace parkPlace : parkPlaces) {
+
+            ParkingReport report = new ParkingReport();
+            report.setParkno(parkPlace.getParkPlaceNo());
+
+            report.setAvailablenum(parkPlace.GetAvailableNum());
+            totalAvailableNum = +parkPlace.GetAvailableNum();
+            report.setParknum(parkPlace.getMaxParkingNum());
+            totalParkNum = parkPlace.getMaxParkingNum() + totalParkNum;
+            parkingreportList.add(report);
+
+        }
+        parkingBoyReport.setTotalAvailableNum(totalAvailableNum);
+        parkingBoyReport.setTotalParkNum(totalAvailableNum);
+        parkingBoyReport.setParkingReportList(parkingreportList);
+        return parkingBoyReport;
     }
 
 }
