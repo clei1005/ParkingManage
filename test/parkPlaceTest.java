@@ -74,9 +74,7 @@ public class parkPlaceTest {
 
     //策略方式
     @Test
-    public void parkBoy_ShouldParkCar(packStrategy strategy) {
-        if (strategy == null)
-            strategy = new FirstAvailableParkingStrategy();
+    public void parkBoy_ShouldParkCar() {
 
 
         Car car = new Car();
@@ -84,7 +82,7 @@ public class parkPlaceTest {
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
         parkPlaces.add(parkPlace);
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, new FirstAvailableParkingStrategy());
         Ticket ticket = parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
 
@@ -112,15 +110,14 @@ public class parkPlaceTest {
 
     //策略模式
     @Test
-    public void parkBoy_ShouldPark_mostAvailableCar(packStrategy strategy) {
-        if (strategy == null)
-            strategy = new MaxAvailableParkingStrategy();
+    public void parkBoy_ShouldPark_mostAvailableCar() {
+
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        parkPlaces.add(parkPlace);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, new MaxAvailableParkingStrategy());
         Ticket ticket = parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1), parkingBoy.getAvailableNum());
 
@@ -133,14 +130,14 @@ public class parkPlaceTest {
     //策略模式
 
     @Test
-    public void parkManager_ShouldPark_byParkingBoy(packStrategy strategy) {
-        if (strategy == null)
-            strategy = new MaxAvailableParkingStrategy();
+    public void parkManager_ShouldPark_byParkingBoy() {
+
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        parkPlaces.add(parkPlace);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, new MaxAvailableParkingStrategy());
         ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
 
         PackManager packManager = new PackManager(parkingBoys);
@@ -157,14 +154,14 @@ public class parkPlaceTest {
     //策略模式
 
     @Test
-    public void parkManager_ShouldPark_byOwn(packStrategy strategy) {
-        if (strategy == null)
-            strategy = new MaxAvailableParkingStrategy();
+    public void parkManager_ShouldPark_byOwn() {
+
         Car car = new Car();
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, strategy);
+        parkPlaces.add(parkPlace);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, new MaxAvailableParkingStrategy());
         ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
 
         PackManager packManager = new PackManager(parkingBoys, parkPlaces);
@@ -180,7 +177,8 @@ public class parkPlaceTest {
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces);
+        parkPlaces.add(parkPlace);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, new MaxAvailableParkingStrategy());
         Ticket ticket = parkingBoy.park(car);
         Assert.assertEquals(new Integer(maxParkingNum - 1).intValue(), parkingBoy.showReport().getTotalAvailableNum());
     }
@@ -193,7 +191,8 @@ public class parkPlaceTest {
         int maxParkingNum = 20;
         ParkPlace parkPlace = new ParkPlace(maxParkingNum);
         ArrayList<ParkPlace> parkPlaces = new ArrayList<ParkPlace>();
-        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces);
+        parkPlaces.add(parkPlace);
+        ParkingBoy parkingBoy = new ParkingBoy(parkPlaces, new MaxAvailableParkingStrategy());
 
         ArrayList<ParkingBoy> parkingBoys = new ArrayList<ParkingBoy>();
 
