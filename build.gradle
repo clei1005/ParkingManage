@@ -1,0 +1,31 @@
+subprojects { subproject ->
+    repositories {
+        mavenLocal()
+    }
+
+    apply plugin: 'java'
+    apply plugin: 'osgi'
+
+    classes.doLast {
+        // without this, the jar task fails with "java.lang.IllegalArgumentException: A Jar can only accept a valid file or directory:" as underlying cause
+        ant.mkdir(dir: "$buildDir/classes/exception")
+        ant.mkdir(dir: "$buildDir/classes/packstrategy")
+        ant.mkdir(dir: "$buildDir/classes/pojo")
+    }
+
+    dependencies {
+        testCompile 'junit:junit:4.8.1'
+        compile 'log4j:log4j:1.2.16'
+    }
+
+    // usage: gradle -i run
+    task run(dependsOn: classes) << {
+        captureStandardOutput(LogLevel.INFO)
+        ant.java(
+                classname: 'parkPlaceTest',
+                fork: true,
+                classpath: "${sourceSets.main.runtimeClasspath.asPath}"
+        )
+    }
+
+}
