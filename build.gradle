@@ -4,7 +4,6 @@ subprojects { subproject ->
     }
 
     apply plugin: 'java'
-    apply plugin: 'osgi'
 
     classes.doLast {
         // without this, the jar task fails with "java.lang.IllegalArgumentException: A Jar can only accept a valid file or directory:" as underlying cause
@@ -15,7 +14,6 @@ subprojects { subproject ->
 
     dependencies {
         testCompile 'junit:junit:4.8.1'
-        compile 'log4j:log4j:1.2.16'
     }
 
     // usage: gradle -i run
@@ -26,6 +24,19 @@ subprojects { subproject ->
                 fork: true,
                 classpath: "${sourceSets.main.runtimeClasspath.asPath}"
         )
+        afterTest { desc, result ->
+            println "Executing test ${desc.name} [${desc.className}] with result: ${result.resultType}"
+        }
+
+    }
+
+    jar {
+        version = '1.0'
+        name = 'parkingLotsModel'
+        manifest {
+            manifest.attributes provider: 'parkingLotsModel'
+
+        }
     }
 
 }
